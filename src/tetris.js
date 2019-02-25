@@ -1,5 +1,12 @@
 let tetris = {};
 
+tetris.currentCoordinates = [
+    {row: 1, col: 1},
+    {row: 1, col: 2},
+    {row: 2, col: 1},
+    {row: 2, col: 2}
+]
+
 // Drawing the grid (playfield)
 tetris.drawPlayField = function() {
     for (let row = 0; row < 22; row++) {
@@ -9,13 +16,6 @@ tetris.drawPlayField = function() {
         }
     }
 }
-
-tetris.currentCoordinates = [
-    {row: 1, col: 1},
-    {row: 1, col: 2},
-    {row: 2, col: 1},
-    {row: 2, col: 2}
-]
 
 //Filling the cells
 tetris.fillCells = function (coordinates, fillColor) {
@@ -27,8 +27,24 @@ tetris.fillCells = function (coordinates, fillColor) {
     }
 }
 
+// Moving the object right/left
+tetris.move = function(direction) {
+    this.fillCells(this.currentCoordinates, '');
+    for (let i = 0; i < tetris.currentCoordinates.length; i++) {
+        if (direction === 'right') {
+            this.currentCoordinates[i].col++;
+        } else if (direction === 'left') {
+            this.currentCoordinates[i].col--;
+        }
+    }
+    this.fillCells(this.currentCoordinates, 'red');
+}
 
-$(document).ready(function(){
+$(document).ready(function() {
     tetris.drawPlayField();
     tetris.fillCells(tetris.currentCoordinates, 'red');
+    $(document).keydown(function(e) {
+        console.log(e.keyCode);
+    })
 })
+
