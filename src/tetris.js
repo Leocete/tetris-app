@@ -258,6 +258,30 @@ tetris.rotate = function() {
     this.fillCells(this.currentCoordinates, 'red');
 }
 
+// Moving shapes down (adding gravity)
+tetris.drop = function() {
+    let reverse = false;
+
+    this.fillCells(this.currentCoordinates, '');
+    this.origin.row++;
+
+    for (let i = 0; i < this.currentCoordinates.length; i++) {
+        this.currentCoordinates[i].row++;
+        if (this.currentCoordinates[i].row > 21) {
+            reverse = true;
+        }
+    }
+
+    if (reverse) {
+        for (let i = 0; i < this.currentCoordinates.length; i--) {
+
+        }
+        this.origin.row--;
+    }
+
+    this.fillCells(this.currentCoordinates, 'red');
+}
+
 $(document).ready(function() {
 
     tetris.drawPlayField();
@@ -271,8 +295,14 @@ $(document).ready(function() {
             tetris.move('left');
         } else if (e.keyCode === 38) {
             tetris.rotate();
+        } else if (e.keyCode === 40) {
+            tetris.drop();
         }
     })
 
+    let gravity = setInterval(function() {
+        tetris.drop();
+    }, 500);
+    
 })
 
