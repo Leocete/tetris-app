@@ -1,8 +1,8 @@
 let tetris = {};
 
 // Variable to store current coordinates
-tetris.origin = {row: 5, col:5};
-tetris.currentShape = 'L';
+tetris.origin = {row: 2, col: 5};
+tetris.currentShape = 'I';
 tetris.currentCoordinates;
 
 // Drawing the grid (playfield)
@@ -203,6 +203,7 @@ tetris.move = function(direction) {
         this.move('left');
     }
 }
+
 // Rotating our shapes
 tetris.rotate = function() {
     let lastShape = this.currentShape;
@@ -273,13 +274,27 @@ tetris.drop = function() {
     }
 
     if (reverse) {
-        for (let i = 0; i < this.currentCoordinates.length; i--) {
-
+        for (let i = 0; i < this.currentCoordinates.length; i++) {
+            this.currentCoordinates[i].row--;
         }
         this.origin.row--;
     }
 
     this.fillCells(this.currentCoordinates, 'red');
+
+    if (reverse) {
+        this.spawn();
+    }
+}
+
+ // Spawning a random shape
+tetris.spawn = function() {
+    let random = Math.floor(Math.random() * 7);
+    let shapeArray = ['L', 'J', 'I', 'O', 'S', 'T', 'Z'];
+
+    this.currentShape = shapeArray[random];
+    this.origin = {row: 2, col: 5};
+    this.currentCoordinates = this.shapeToCoordinates(this.currentShape, this.origin);
 }
 
 $(document).ready(function() {
