@@ -172,36 +172,29 @@ tetris.shapeToCoordinates = function(shape, origin) {
 
 // Moving the object right/left
 tetris.move = function(direction) {
-    let reverse = false;
     this.fillCells(this.currentCoordinates, '');
 
-    for (let i = 0; i < this.currentCoordinates.length; i++) {
-        if (direction === 'right') {
-            this.currentCoordinates[i].col++;
-            if (this.currentCoordinates[i].col > 9) {
-                reverse = true;
-            }
-        } else if (direction === 'left') {
-            this.currentCoordinates[i].col--;
-            if (this.currentCoordinates[i].col < 0) {
-                reverse = true;
-            }
-        }
-    }
-    // Сhanging our origin coordinates so we can rotate our shapes in any place
+    // Moving origin
     if (direction === 'right') {
         this.origin.col++;
     } else if (direction === 'left') {
         this.origin.col--;
     } 
 
+    this.currentCoordinates = this.shapeToCoordinates(this.currentShape, this.origin);
+
+    if (this.ifReverse()) {
+        if (direction === 'right') {
+            this.origin.col--;
+        } else if (direction === 'left') {
+            this.origin.col++
+        }
+    }
+
+    this.currentCoordinates = this.shapeToCoordinates(this.currentShape, this.origin);
+    
     this.fillCells(this.currentCoordinates, 'red');
 
-    if (reverse && direction === 'left') {
-        this.move('right');
-    } else if (reverse && direction === 'right') {
-        this.move('left');
-    }
 }
 
 // Rotating our shapes
@@ -250,7 +243,7 @@ tetris.rotate = function() {
     this.currentCoordinates = this.shapeToCoordinates(this.currentShape, this.origin);
 
     for (let i = 0; i < this.currentCoordinates.length; i++) {
-        if (this.currentCoordinates[i].col > 9 || this.currentCoordinates[i].col < 0) {
+        if (this.ifReverse()) {
             this.currentShape = lastShape;
         }
     }
@@ -268,8 +261,8 @@ tetris.drop = function() {
 
     for (let i = 0; i < this.currentCoordinates.length; i++) {
         this.currentCoordinates[i].row++;
-        if (this.currentCoordinates[i].row > 21) {
-            reverse = true;
+        if (this.ifReverse()) {   
+                reverse = true;
         }
     }
 
@@ -283,6 +276,7 @@ tetris.drop = function() {
     this.fillCells(this.currentCoordinates, 'red');
 
     if (reverse) {
+        this.fillCells(this.currentCoordinates, 'RED');
         this.spawn();
     }
 }
@@ -295,6 +289,19 @@ tetris.spawn = function() {
     this.currentShape = shapeArray[random];
     this.origin = {row: 2, col: 5};
     this.currentCoordinates = this.shapeToCoordinates(this.currentShape, this.origin);
+}
+
+tetris.ifReverse = function() {
+    for (let i = 0; i < this.currentCoordinates.length; i++) {
+        let row = this.currentCoordinates[i].row;
+        let col = this.currentCoordinates[i].col;
+        let $coor = $('.'+row).find('#'+col);
+
+        if ($coor.length === 0 || $coor.attr('bgcolor') === 'RED') {
+            return true;
+        }
+    }
+    return false;
 }
 
 $(document).ready(function() {
@@ -320,4 +327,3 @@ $(document).ready(function() {
     }, 500);
     
 })
-
