@@ -15,16 +15,6 @@ tetris.drawPlayField = function() {
     }
 }
 
-//Filling the cells
-tetris.fillCells = function(coordinates, fillColor) {
-    for (let i = 0; i < coordinates.length; i++) {
-        let row = coordinates[i].row;
-        let col = coordinates[i].col;
-        let $coor = $('.'+row).find('#'+col);
-        $coor.attr('bgcolor', fillColor);
-    }
-}
-
 // Drawing different shapes
 tetris.shapeToCoordinates = function(shape, origin) {
     if (shape === 'L') {
@@ -170,6 +160,17 @@ tetris.shapeToCoordinates = function(shape, origin) {
       } 
 }
 
+//Filling the cells
+tetris.fillCells = function(coordinates, fillColor) {
+    for (let i = 0; i < coordinates.length; i++) {
+        let row = coordinates[i].row;
+        let col = coordinates[i].col;
+        let $coor = $('.'+row).find('#'+col);
+        $coor.attr('bgcolor', fillColor);
+    }
+}
+
+
 // Moving the object right/left
 tetris.move = function(direction) {
     this.fillCells(this.currentCoordinates, '');
@@ -277,20 +278,12 @@ tetris.drop = function() {
 
     if (reverse) {
         this.fillCells(this.currentCoordinates, 'RED');
+        this.emptyFullRow();
         this.spawn();
     }
 }
 
- // Spawning a random shape
-tetris.spawn = function() {
-    let random = Math.floor(Math.random() * 7);
-    let shapeArray = ['L', 'J', 'I', 'O', 'S', 'T', 'Z'];
-
-    this.currentShape = shapeArray[random];
-    this.origin = {row: 2, col: 5};
-    this.currentCoordinates = this.shapeToCoordinates(this.currentShape, this.origin);
-}
-
+// If we need to reverse the shape (when shape reach the bottom/reach other shape)
 tetris.ifReverse = function() {
     for (let i = 0; i < this.currentCoordinates.length; i++) {
         let row = this.currentCoordinates[i].row;
@@ -302,6 +295,42 @@ tetris.ifReverse = function() {
         }
     }
     return false;
+}
+
+// Empty the full row
+tetris.emptyFullRow = function() {
+    let drops = 0; // store the number of full rows
+
+    for (let i = 21; i >= 0; i--) { // scan rows from the bottom to the top
+        let rowIsFull = true;
+
+        for (let j = 0; j < 10; j++) { // scan columns from left to right
+            let $coor = $('.'+i).find('#'+j);
+
+            if ($coor.attr('bgcolor') !== 'RED') {
+                rowIsFull = false;
+            }
+
+            if (drops > 0) {
+                let $newCoor = $('.'+ (i + drops)).find('#'+j); // referencing the cell lower by the number of rows stored in drops
+                $newCoor.attr('bgcolor', $coor.attr('bgcolor')); 
+            }
+        }
+
+        if (rowIsFull) {
+            drops++;
+        }
+    }
+}
+
+// Spawning a random shape
+tetris.spawn = function() {
+    let random = Math.floor(Math.random() * 7);
+    let shapeArray = ['L', 'J', 'I', 'O', 'S', 'T', 'Z'];
+
+    this.currentShape = shapeArray[random];
+    this.origin = {row: 2, col: 5};
+    this.currentCoordinates = this.shapeToCoordinates(this.currentShape, this.origin);
 }
 
 $(document).ready(function() {
