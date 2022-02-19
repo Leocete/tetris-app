@@ -2,6 +2,7 @@ let tetris = {};
 
 // Test - 1 
 // Test - 2.1
+// Test - 2.2
 
 // Variable to store current coordinates
 tetris.origin = {row: 2, col: 5};
