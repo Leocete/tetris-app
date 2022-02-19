@@ -1,5 +1,7 @@
 let tetris = {};
 
+// Test - 1 
+
 // Variable to store current coordinates
 tetris.origin = {row: 2, col: 5};
 tetris.currentShape = 'I';
