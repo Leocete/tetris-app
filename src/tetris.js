@@ -1,5 +1,7 @@
 let tetris = {};
 
+// This is master.1 comment
+
 // Variable to store current coordinates
 tetris.origin = {row: 2, col: 5};
 tetris.currentShape = 'I';
